@@ -1,9 +1,4 @@
-import { FaPlus } from "react-icons/fa6";
-import { FiMinus } from "react-icons/fi";
-import { FaMotorcycle } from "react-icons/fa";
-import { LuPackageCheck } from "react-icons/lu";
 import { RiMoneyDollarBoxFill } from "react-icons/ri";
-import { useState } from "react";
 import Image from 'next/image';
 
 export default function DetailProductContent() {
