@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import productImg from "../../../public/images/product.webp"; // Gambar default jika tidak ada
 import { RiMoneyDollarBoxFill } from "react-icons/ri";
 import {
     Pagination,
