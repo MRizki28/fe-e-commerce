@@ -25,8 +25,18 @@ interface User {
     name: string;
     email: string;
     role: string;
-    profile: any
+    profile: {
+        name: string;
+        address: string;
+    }
 }
+interface DecodedToken {
+    id: string;
+    name: string;
+    email: string;
+    exp: number;
+}
+
 
 export default function NavbarComponent() {
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -36,9 +46,10 @@ export default function NavbarComponent() {
 
     let idUser = ''
     const checkTokenValid = () => {
-        const token: any = localStorage.getItem('token');
+        const token: string | null = localStorage.getItem('token');
+
         if (token) {
-            const decodeToken: any = jwtDecode(token);
+            const decodeToken: DecodedToken = jwtDecode(token);
             idUser = decodeToken.id;
             if (decodeToken.exp && decodeToken.exp < Math.floor(Date.now() / 1000)) {
                 localStorage.removeItem('token');
@@ -82,7 +93,7 @@ export default function NavbarComponent() {
             console.log(error);
         }
     };
-    
+
     console.log(countCart)
     const handleLogout = async () => {
         try {
@@ -96,7 +107,7 @@ export default function NavbarComponent() {
                             },
                         }
                     );
-                    if(response.status == 201){
+                    if (response.status == 201) {
                         SweetAlertService.successLogout().then(() => {
                             localStorage.removeItem('token');
                             setIsLogin(false);
@@ -109,12 +120,13 @@ export default function NavbarComponent() {
             console.log(error)
         }
     }
-
     useEffect(() => {
         checkTokenValid();
         getDataUser();
         getTotalCart();
-    }, [])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); 
+
 
     return (
         <>
