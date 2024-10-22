@@ -6,7 +6,6 @@ import { RiMoneyDollarBoxFill } from "react-icons/ri";
 import { FaCartArrowDown } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
-import Image from "next/image";
 import Link from "next/link";
 import { jwtDecode } from "jwt-decode";
 import SweetAlertService from "@/helper/sweetAlert";
@@ -21,6 +20,7 @@ interface Product {
 }
 
 export default function DetailProductContent() {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [data, setData] = useState<Product | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -88,6 +88,7 @@ export default function DetailProductContent() {
     useEffect(() => {
         getDataById();
         checkTokenValid();
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getIdFromUrl]);
 
     return (
