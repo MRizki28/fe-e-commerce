@@ -34,15 +34,6 @@ class SweetAlertService {
         });
     }
 
-    static async successOrder() {
-        return MySwal.fire({
-            title: 'Order Berhasil',
-            text: 'Order berhasil, silahkan tunggu admin akan menghubungi anda',
-            icon: 'success',
-            confirmButtonText: 'OK',
-        });
-    }
-
     static async cancelOrder() {
         return MySwal.fire({
             title: 'Success',
@@ -140,6 +131,26 @@ class SweetAlertService {
         return MySwal.fire({
             title: 'Sukses',
             text: 'Sukses tambah ke keranjang silahkan check keranjang anda',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        })
+    }
+
+    static async createOrder() {
+        return MySwal.fire({
+            title: 'Sukses',
+            text: 'Anda yakin ingin order?',
+            icon: 'question',
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Batal',
+            showCancelButton: true,
+        })
+    }
+
+    static async successOrder() {
+        return MySwal.fire({
+            title: 'Sukses',
+            text: 'Order berhasil, silahkan tunggu admin akan menghubungi anda',
             icon: 'success',
             confirmButtonText: 'OK'
         })
