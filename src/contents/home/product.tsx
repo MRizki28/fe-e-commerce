@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { RiMoneyDollarBoxFill } from "react-icons/ri";
+import { CiShoppingCart } from "react-icons/ci";
 import {
     Pagination,
     PaginationContent,
@@ -26,10 +26,10 @@ export default function Product() {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    const [loading, setLoading] = useState(false); // State loading
+    const [loading, setLoading] = useState(false);
 
     const getDataProduct = async (page: number) => {
-        setLoading(true); // Set loading true saat memulai pengambilan data
+        setLoading(true);
         try {
             const response = await axios.get(`https://beecommers.up.railway.app/api/v1/product?page=${page}`);
             const responseData = response.data;
@@ -38,7 +38,7 @@ export default function Product() {
         } catch (error) {
             console.log(error);
         } finally {
-            setLoading(false); // Set loading false setelah pengambilan data selesai
+            setLoading(false);
         }
     };
 
@@ -77,7 +77,7 @@ export default function Product() {
                 <div className="grid grid-cols-1 gap-y-4 gap-5 md:grid-cols-5">
                     {products.map(product => (
                         <div key={product.id} className="bg-white border flex flex-col max-w-xl md:max-w-xs">
-                            <Link href="#">
+                            <Link href={`detail-product/${product.id}`}>
                                 <Image
                                     alt={product.name_product}
                                     src={`https://beecommers.up.railway.app/api/v1/product/img/${product.product_img}`}
@@ -88,7 +88,7 @@ export default function Product() {
                             </Link>
                             <div className="p-5 flex flex-col flex-grow border-t-2">
                                 <span className="text-semiBlack">{product.name_product}</span>
-                                <Link href="#">
+                                <Link href={`detail-product/${product.id}`}>
                                     <h5 className="mb-2 text-xl font-bold tracking-tight text-brownSkincare">
                                         Rp. {product.price}
                                     </h5>
@@ -99,7 +99,7 @@ export default function Product() {
                                 <div className="mt-auto">
                                     <Link href="#">
                                         <button className="bg-red-600 text-white p-2 text-sm rounded-md w-full flex justify-center hover:bg-red-800">
-                                            <RiMoneyDollarBoxFill className="text-xl" />
+                                            <CiShoppingCart className="text-xl" />
                                         </button>
                                     </Link>
                                 </div>
