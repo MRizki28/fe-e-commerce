@@ -97,7 +97,7 @@ export default function Product() {
                                     {product.description}
                                 </p>
                                 <div className="mt-auto">
-                                    <Link href="#">
+                                    <Link href={`detail-product/${product.id}`}>
                                         <button className="bg-red-600 text-white p-2 text-sm rounded-md w-full flex justify-center hover:bg-red-800">
                                             <CiShoppingCart className="text-xl" />
                                         </button>
