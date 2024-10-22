@@ -32,6 +32,7 @@ export default function NavbarComponent() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(true);
     const [user, setUser] = useState<User>();
+    const [countCart, setCountCart] = useState(0);
 
     let idUser = ''
     const checkTokenValid = () => {
@@ -61,11 +62,28 @@ export default function NavbarComponent() {
             const response = await axios.get('https://beecommers.up.railway.app/api/v1/user/get/' + idUser)
             const responseData = await response.data;
             setUser(responseData.data);
+            localStorage.setItem('name', responseData.data.profile.name);
+            localStorage.setItem('address', responseData.data.profile.address);
         } catch (error) {
             console.log(error)
         }
     }
 
+    const getTotalCart = async () => {
+        try {
+            const response = await axios.get('https://beecommers.up.railway.app/api/v1/cart', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            const responseData = response.data;
+            setCountCart(responseData.data.length);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
+    console.log(countCart)
     const handleLogout = async () => {
         try {
             SweetAlertService.logoutAlert().then(async (result) => {
@@ -95,6 +113,7 @@ export default function NavbarComponent() {
     useEffect(() => {
         checkTokenValid();
         getDataUser();
+        getTotalCart();
     }, [])
 
     return (
@@ -112,7 +131,7 @@ export default function NavbarComponent() {
                                 <button className="relative" type="button" onClick={handleOpen}>
                                     <CiShoppingCart className="text-3xl" />
                                     <span className="absolute top-[-5px] right-[-10px] bg-red-500 text-white text-xs rounded-full px-1">
-                                        3
+                                        {countCart}
                                     </span>
                                 </button>
                                 <Dropdown
