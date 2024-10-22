@@ -1,24 +1,100 @@
 'use client';
 
-import { useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface CartProps {
-    isOpen: boolean; 
-    onClose: () => void; 
+    isOpen: boolean;
+    onClose: () => void;
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-    const [quantity, setQuantity] = useState(0);
+    const [dataCart, setDataCart] = useState<any[]>([]);
+    const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
 
-    const increaseQuantity = () => {
-        setQuantity(quantity + 1);
-    };
-
-    const decreaseQuantity = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
+    const getDataCart = async () => {
+        try {
+            const response = await axios.get('https://beecommers.up.railway.app/api/v1/cart', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const responseData = response.data;
+            console.log(responseData);
+            setDataCart(responseData.data);
+        } catch (error) {
+            console.log(error);
         }
     };
+
+    const updateQuantity = async (id: string, id_product: string, qty: number) => {
+        console.log(id_product)
+        try {
+            const response = await axios.post(
+                `https://beecommers.up.railway.app/api/v1/cart/update/${id}`,
+                {
+                    id_product,
+                    qty
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+
+            console.log(response)
+        } catch (error) {
+            console.error('Error updating quantity:', error);
+        }
+    };
+
+    const increaseQuantity = (id: string, id_product: string, currentQty: number) => {
+        const newQty = currentQty + 1;
+        setDataCart(prevData =>
+            prevData.map(item =>
+                item.id === id ? { ...item, qty: newQty } : item
+            )
+        );
+        updateQuantity(id, id_product, newQty);
+    };
+
+    const decreaseQuantity = (id: string, id_product: string, currentQty: number) => {
+        if (currentQty > 1) {
+            const newQty = currentQty - 1;
+            setDataCart(prevData =>
+                prevData.map(item =>
+                    item.id === id ? { ...item, qty: newQty } : item
+                )
+            );
+            updateQuantity(id, id_product, newQty);
+        }
+    };
+
+    const deleteCart = async (id: string) => {
+        setDeleteLoading((prev) => ({ ...prev, [id]: true }));
+        try {
+            const response = await axios.delete(`https://beecommers.up.railway.app/api/v1/cart/delete/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            console.log(response);
+            getDataCart();
+        } catch (error) {
+            console.error('Error deleting cart:', error);
+        } finally {
+            setDeleteLoading((prev) => ({ ...prev, [id]: false }));
+        }
+    }
+
+    useEffect(() => {
+        if (isOpen) {
+            getDataCart();
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -51,25 +127,30 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td className="p-4">
-                                        <img src="#" className="w-16 md:w-32 max-w-full max-h-full" alt="Product" />
-                                    </td>
-                                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                        Product Name
-                                    </td>
-                                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white flex items-center">
-                                        <button onClick={decreaseQuantity} className="bg-gray-200 p-1 rounded-md hover:bg-gray-300">-</button>
-                                        <span className="mx-2">{quantity}</span>
-                                        <button onClick={increaseQuantity} className="bg-gray-200 p-1 rounded-md hover:bg-gray-300">+</button>
-                                    </td>
-                                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                        2000
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <a href="#" className="font-medium text-red-600 dark:text-red-500 hover:underline">Remove</a>
-                                    </td>
-                                </tr>
+                                {dataCart.map((item) => (
+                                    <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td className="p-4">
+                                            <Image src={`https://beecommers.up.railway.app/api/v1/product/img/${item.product.product_img}`} className="w-16 md:w-32 max-w-full max-h-full" width={100} height={100} alt={item.product.name_product} />
+                                        </td>
+                                        <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                            {item.product.name_product}
+                                        </td>
+                                        <div className="flex items-center justify-center pt-[21px]">
+                                            <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white flex items-center">
+                                                <button onClick={() => decreaseQuantity(item.id, item.id_product, item.qty)} className="bg-gray-200 p-1 rounded-md hover:bg-gray-300">-</button>
+                                                <span className="mx-2">{item.qty}</span>
+                                                <button onClick={() => increaseQuantity(item.id, item.id_product, item.qty)} className="bg-gray-200 p-1 rounded-md hover:bg-gray-300">+</button>
+                                            </td>
+                                        </div>
+
+                                        <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                            Rp.{item.product.price}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button onClick={() => deleteCart(item.id)} className="font-medium text-red-600 dark:text-red-500 hover:underline">  {deleteLoading[item.id] ? 'Waiting...' : 'Remove'}</button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -80,14 +161,17 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                         <div className="p-3">
                             <dl className="flex justify-between font-bold">
                                 <dt>Total</dt>
-                                <dd>{quantity * 2000}</dd>
+                                <dd>Rp.{dataCart.reduce((total, item) => total + item.qty * parseInt(item.product.price), 0)}</dd>
                             </dl>
                         </div>
                     </div>
                 </div>
-                <div className="p-4 flex justify-end">
+                <div className="p-4 flex justify-end space-x-3">
                     <button onClick={onClose} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">
                         Close
+                    </button>
+                    <button onClick={onClose} className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900">
+                        Order
                     </button>
                 </div>
             </div>
