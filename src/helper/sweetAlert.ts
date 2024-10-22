@@ -135,6 +135,15 @@ class SweetAlertService {
             confirmButtonText: 'OK',
         })
     }
+
+    static async successAddToCart() {
+        return MySwal.fire({
+            title: 'Sukses',
+            text: 'Sukses tambah ke keranjang silahkan check keranjang anda',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        })
+    }
 }
 
 export default SweetAlertService;
