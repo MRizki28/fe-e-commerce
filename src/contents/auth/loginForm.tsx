@@ -7,6 +7,7 @@ import {useForm} from "react-hook-form";
 export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const onSubmit = async (data: any) => {
         try {   
             const response = await axios.post('https://beecommers.up.railway.app/api/v1/auth/login/', data);
