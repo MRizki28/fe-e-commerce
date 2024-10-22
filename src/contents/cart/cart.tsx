@@ -11,6 +11,7 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const [dataCart, setDataCart] = useState<any[]>([]);
     const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
     const [loading, setLoading] = useState(true);
