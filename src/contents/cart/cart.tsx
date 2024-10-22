@@ -1,5 +1,6 @@
 'use client';
 
+import SweetAlertService from "@/helper/sweetAlert";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,8 +13,10 @@ interface CartProps {
 export default function Cart({ isOpen, onClose }: CartProps) {
     const [dataCart, setDataCart] = useState<any[]>([]);
     const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
+    const [loading, setLoading] = useState(true);
 
     const getDataCart = async () => {
+        setLoading(true); // Set loading ke true sebelum memulai pengambilan data
         try {
             const response = await axios.get('https://beecommers.up.railway.app/api/v1/cart', {
                 headers: {
@@ -25,8 +28,11 @@ export default function Cart({ isOpen, onClose }: CartProps) {
             setDataCart(responseData.data);
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false); // Set loading ke false setelah pengambilan data selesai, baik berhasil maupun gagal
         }
     };
+
 
     const updateQuantity = async (id: string, id_product: string, qty: number) => {
         console.log(id_product)
@@ -89,6 +95,31 @@ export default function Cart({ isOpen, onClose }: CartProps) {
             setDeleteLoading((prev) => ({ ...prev, [id]: false }));
         }
     }
+
+    const handleOrder = async () => {
+        try {
+            SweetAlertService.createOrder().then(async (confirmed) => {
+                if (confirmed) {
+                    const response = await axios.post('https://beecommers.up.railway.app/api/v1/order/create', {}, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+
+                    if (response.status === 201) {
+                        SweetAlertService.successOrder().then(() => {
+                            window.location.reload();
+                        })
+
+                    }
+                }
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     useEffect(() => {
         if (isOpen) {
@@ -170,8 +201,12 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                     <button onClick={onClose} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">
                         Close
                     </button>
-                    <button onClick={onClose} className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900">
-                        Order
+                    <button
+                        onClick={handleOrder}
+                        className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900"
+                        disabled={loading}
+                    >
+                        {loading ? 'Loading...' : 'Order'}
                     </button>
                 </div>
             </div>
