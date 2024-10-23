@@ -27,24 +27,33 @@ export default function Product() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const getDataProduct = async (page: number) => {
+    const getDataProduct = async (page: number, search = "") => {
         setLoading(true);
         try {
-            const response = await axios.get(`https://beecommers.up.railway.app/api/v1/product?page=${page}`);
+            const response = await axios.get(`https://beecommers.up.railway.app/api/v1/product?search=${search}&page=${page}`);
             const responseData = response.data;
-            setProducts(responseData.data);
-            setTotalPage(responseData.totalPage);
+            if (response.status === 200) {
+                setProducts(responseData.data);
+                setTotalPage(responseData.totalPage);
+            } else {
+                setProducts([]);
+                setTotalPage(1);
+            }
         } catch (error) {
             console.log(error);
+            setProducts([]);
+            setTotalPage(1); 
         } finally {
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
-        getDataProduct(currentPage);
-    }, [currentPage]);
+        getDataProduct(currentPage, searchTerm);
+    }, [currentPage, searchTerm]);
 
     const handleNextPage = () => {
         if (currentPage < totalPage) {
@@ -62,6 +71,11 @@ export default function Product() {
         setCurrentPage(page);
     };
 
+    const handleSearch = (search: string) => {
+        setSearchTerm(search);
+        setCurrentPage(1);
+    }
+
     return (
         <section className="max-w-screen-xl mx-auto p-3">
             <div className="mt-0 md:mt-24 mb-5 flex">
@@ -69,11 +83,14 @@ export default function Product() {
                     <h1 className="text-left font-bold text-2xl">PRODUCT</h1>
                 </div>
             </div>
+            <div>
+                <input type="text" name="search" id="search" defaultValue="" className="border w-full p-3" placeholder="Search"   onChange={(e) => handleSearch(e.target.value)} />
+            </div>
             {loading ? (
                 <div className="flex justify-center items-center h-60">
                     <span className="text-xl">Loading...</span>
                 </div>
-            ) : (
+            ) : products.length > 0 ? (
                 <div className="grid grid-cols-1 gap-y-4 gap-5 md:grid-cols-5">
                     {products.map(product => (
                         <div key={product.id} className="bg-white border flex flex-col max-w-xl md:max-w-xs">
@@ -106,6 +123,10 @@ export default function Product() {
                             </div>
                         </div>
                     ))}
+                </div>
+            ) : (
+                <div className="flex justify-center items-center h-60">
+                    <span className="text-xl">No data</span>
                 </div>
             )}
             <div>
