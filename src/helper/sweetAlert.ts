@@ -58,7 +58,7 @@ class SweetAlertService {
     static async passwordNotMatch() {
         return MySwal.fire({
             title: 'Password tidak sama',
-            text: 'Pastikan password yang anda masukkan sama',
+            text: 'Password konfirmasi tidak sama',
             icon: 'warning',
             confirmButtonText: 'OK',
         });
@@ -152,6 +152,15 @@ class SweetAlertService {
             title: 'Sukses',
             text: 'Order berhasil, silahkan tunggu admin akan menghubungi anda',
             icon: 'success',
+            confirmButtonText: 'OK'
+        })
+    }
+
+    static async checkValdiation() {
+        return MySwal.fire({
+            title: 'Warning',
+            text: 'Silahkan cek inputan anda',
+            icon: 'warning',
             confirmButtonText: 'OK'
         })
     }
