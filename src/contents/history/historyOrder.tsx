@@ -66,14 +66,15 @@ export default function HistoryOrder() {
                 <h1>History Pesanan</h1>
             </div>
             <div className="mt-5">
-                <div className="grid grid-cols-1 gap-y-4 gap-2 md:grid-cols-5 mt-2">
-                    {loading ? (
-                        <div className="flex justify-center items-center h-60">
-                            <span className="text-xl">Loading...</span>
-                        </div>
-                    ) : dataHistory.length > 0 ? (
-                        <div className="bg-white border flex flex-col max-w-xl md:max-w-md">
-                            {dataHistory.map((item, index) => (
+                {loading ? (
+                    <div className="flex justify-center items-center h-60">
+                        <span className="text-xl">Loading...</span>
+                    </div>
+                ) : dataHistory.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-y-4 gap-2 md:grid-cols-5 mt-2">
+                        {dataHistory.map((item, index) => (
+                            <div className="bg-white border flex flex-col max-w-xl md:max-w-md">
+
                                 <>
                                     <Image
                                         alt="product"
@@ -92,15 +93,15 @@ export default function HistoryOrder() {
                                         <p className="mb-3 font-normal text-[12px] text-black">Total {item.qty} Produk: <b>Rp. {item.itemTotalPrice}</b></p>
                                     </div>
                                 </>
-                            ))}
-                        </div>
 
-                    ) : (
-                        <div className="flex justify-center items-center h-60">
-                            <span className="text-xl">No data</span>
-                        </div>
-                    )}
-                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex justify-center items-center h-60">
+                        <span className="text-xl">No data</span>
+                    </div>
+                )}
             </div>
         </div >
     )
