@@ -13,7 +13,6 @@ import SweetAlertService from "@/helper/sweetAlert";
 interface Product {
     id: string;
     name_product: string;
-    stock: number;
     product_img: string;
     price: string;
     description: string;
@@ -106,9 +105,6 @@ export default function DetailProductContent() {
                             <div>
                                 <h1 className="text-sm text-semiBlack font-bold">{data.name_product}</h1>
                                 <span className="text-[12px] text-greyText">#{data.id}</span>
-                            </div>
-                            <div className="mt-2">
-                                <span className="text-sm text-greyText">Stock: {data.stock}</span>
                             </div>
                             <div className="mt-2">
                                 <span className="text-sm text-priceColor">Rp. {parseFloat(data.price).toLocaleString('id-ID')}</span>
