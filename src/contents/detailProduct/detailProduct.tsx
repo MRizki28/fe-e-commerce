@@ -9,6 +9,7 @@ import axios from "axios";
 import Link from "next/link";
 import { jwtDecode } from "jwt-decode";
 import SweetAlertService from "@/helper/sweetAlert";
+import Image from "next/image";
 
 interface Product {
     id: string;
@@ -155,7 +156,7 @@ export default function DetailProductContent() {
                             </div>
                         </div>
                         <div className="flex justify-center items-center w-full md:w-1/2 lg:w-3/5 ">
-                            <img
+                            <Image
                                 alt={data.name_product}
                                 src={`https://beecommers.up.railway.app/api/v1/product/img/${data.product_img}`}
                                 width={460}

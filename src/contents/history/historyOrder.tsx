@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import Product from "../home/product";
 
@@ -16,6 +15,7 @@ interface Product {
     itemTotalPrice: string;
 }
 export default function HistoryOrder() {
+       /* eslint-disable @typescript-eslint/no-explicit-any */
     const [dataHistory, setDataHistory] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -92,9 +92,7 @@ export default function HistoryOrder() {
                                     <p className="mb-3 font-normal text-[12px] text-black">Total {item.qty} Produk: <b>Rp. {item.itemTotalPrice}</b></p>
                                 </div>
                             </>
-
                         ))}
-
                     </div>
                 </div>
             ) : (
