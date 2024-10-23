@@ -39,6 +39,7 @@ interface DecodedToken {
 
 
 export default function NavbarComponent() {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(true);
     const [user, setUser] = useState<User>();
@@ -55,6 +56,7 @@ export default function NavbarComponent() {
                 localStorage.removeItem('token');
                 setIsLogin(false);
             }
+
         } else {
             setIsLogin(false);
         }
@@ -70,7 +72,11 @@ export default function NavbarComponent() {
 
     const getDataUser = async () => {
         try {
-            const response = await axios.get('https://beecommers.up.railway.app/api/v1/user/get/' + idUser)
+            const response = await axios.get('https://beecommers.up.railway.app/api/v1/user/get/' + idUser, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
             const responseData = await response.data;
             setUser(responseData.data);
             localStorage.setItem('name', responseData.data.profile.name);
@@ -89,8 +95,12 @@ export default function NavbarComponent() {
             })
             const responseData = response.data;
             setCountCart(responseData.data.length);
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
+            if (error.response.status === 401) {
+                localStorage.removeItem('token');
+                setIsLogin(false);
+            }
         }
     };
 
@@ -125,13 +135,13 @@ export default function NavbarComponent() {
         getDataUser();
         getTotalCart();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); 
+    }, []);
 
 
     return (
         <>
             <Navbar fluid rounded>
-                <NavbarBrand href="https://flowbite-react.com">
+                <NavbarBrand href="/">
                     <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">E-COMMERCE</span>
                 </NavbarBrand>
                 <div className="flex md:order-2">
@@ -173,10 +183,10 @@ export default function NavbarComponent() {
                     <NavbarToggle />
                 </div>
                 <NavbarCollapse>
-                    <NavbarLink href="#">
+                    <NavbarLink href="/">
                         <span className="hover:text-red-700">Home</span>
                     </NavbarLink>
-                    <NavbarLink href="#"><span className="hover:text-red-700">History</span></NavbarLink>
+                    <NavbarLink href="/history"><span className="hover:text-red-700">History</span></NavbarLink>
                 </NavbarCollapse>
             </Navbar>
             <Cart isOpen={isCartOpen} onClose={handleClose} />
